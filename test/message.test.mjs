@@ -1,12 +1,22 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 
-const message = "GitHub Actions により、テストとデプロイが自動実行されています。";
+const messages = JSON.parse(fs.readFileSync("./src/messages.json", "utf-8"));
 
-test("message should mention deployment", () => {
-  assert.match(message, /デプロイ/);
+test("messages should be an array", () => {
+  assert.equal(Array.isArray(messages), true);
 });
 
-test("message should not be empty", () => {
-  assert.notEqual(message.trim(), "");
+test("messages should contain at least one entry", () => {
+  assert.ok(messages.length >= 1);
+});
+
+test("each entry should have name and message", () => {
+  for (const item of messages) {
+    assert.equal(typeof item.name, "string");
+    assert.equal(typeof item.message, "string");
+    assert.notEqual(item.name.trim(), "");
+    assert.notEqual(item.message.trim(), "");
+  }
 });
